@@ -29,12 +29,12 @@
         <div class="col-lg-12">
             <div class="row mt-2 mb-2">
                 <div class="col-lg-6 mb-2">
-                    <a href="{{ route('customer.create') }}" class="btn btn-sm shadow-sm myBtn border rounded">
+                    <a href="{{ route('customer.create') }}" class="btn btn-success shadow-sm myBtn border rounded">
                         <svg width="25" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                             stroke="black">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
+                        </svg> &nbsp; New Entry
                     </a>
                 </div>
                 <div class="col-lg-6 mb-2">
@@ -83,7 +83,7 @@
                                 </div>
                             </div>
                             <img src="{{ $customer->user->getAvatar() }}"
-                                style="object-fit: cover; height:350px; border-top-right-radius: 0.5rem; border-top-left-radius: 0.5rem;">
+                                style="object-fit: cover; height:150px; border-top-right-radius: 0.5rem; border-top-left-radius: 0.5rem;">
                             <div class="card-body">
                                 <div class="card-text">
                                     <div class="row">
@@ -118,19 +118,24 @@
                                                                     </span>
                                                                 </td>
                                                             </tr>
-                                                            <tr>
-                                                                <td><i class="fas fa-phone"></i></td>
-                                                                <td>
-                                                                    <span>
-                                                                        +6281233808395
-                                                                    </span>
-                                                                </td>
-                                                            </tr>
+                                                            
                                                             <tr>
                                                                 <td><i class="fas fa-birthday-cake"></i></td>
                                                                 <td>
                                                                     <span>
-                                                                        {{ $customer->birthdate }}
+                                                                        {{ $customer->umid }}
+                                                                    </span>
+                                                                </td>
+                                                               
+                                                                
+                                                            </tr>
+                                                            <tr>
+                                                                
+                                                                <td>
+                                                                    <span>
+                                                                        <td> <hr>
+                                                                            <a href="/add-member/{{$customer->id}}" class="btn btn-success btn-sm"><font color="white"> Add Members</a>
+                                                                        </td>
                                                                     </span>
                                                                 </td>
                                                             </tr>

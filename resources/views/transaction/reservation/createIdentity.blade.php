@@ -10,17 +10,87 @@
             <div class="col-lg-12">
                 <div class="card shadow-sm border">
                     <div class="card-header">
-                        <h2>Add Customer</h2>
+                        <h2>Add Patient Details</h2>
                     </div>
                     <div class="card-body p-3">
                         <form class="row g-3" method="POST" action="{{ route('transaction.reservation.storeCustomer') }}"
                             enctype="multipart/form-data">
                             @csrf
                             <div class="col-md-12">
-                                <label for="name" class="form-label">Name</label>
+                                <label for="name" class="form-label">Patient Name</label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
                                     name="name" value="{{ old('name') }}">
                                 @error('name')
+                                    <div class="text-danger mt-1">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="col-md-12">
+                                <label for="pname" class="form-label"> Primary Attendant Name</label>
+                                <input type="text" class="form-control @error('pname') is-invalid @enderror" id="pname"
+                                    name="pname" value="{{ old('pname') }}">
+                                @error('pname')
+                                    <div class="text-danger mt-1">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="col-md-12">
+                                <label for="ref" class="form-label"> Referred By Doctor Name  </label>
+                                <input type="text" class="form-control @error('ref') is-invalid @enderror" id="ref"
+                                    name="ref" value="{{ old('ref') }}">
+                                @error('ref')
+                                    <div class="text-danger mt-1">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="col-md-12">
+                                <label for="letter_num" class="form-label"> Ref. Letter Number dt.  </label>
+                                <input type="text" class="form-control @error('letter_num') is-invalid @enderror" id="letter_num"
+                                    name="letter_num" value="{{ old('letter_num') }}">
+                                @error('letter_num')
+                                    <div class="text-danger mt-1">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="col-md-12">
+                                <label for="relation" class="form-label"> Relationship with patient </label>
+                                <input type="text" class="form-control @error('relation') is-invalid @enderror" id="relation"
+                                    name="relation" value="{{ old('relation') }}">
+                                @error('relation')
+                                    <div class="text-danger mt-1">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="col-md-12">
+                                <label for="ward" class="form-label"> Patient Ward Number / OPD </label>
+                                <input type="text" class="form-control @error('ward') is-invalid @enderror" id="ward"
+                                    name="ward" value="{{ old('ward') }}">
+                                @error('ward')
+                                    <div class="text-danger mt-1">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="col-md-12">
+                                <label for="cot" class="form-label"> Patient Cot Number (Oprtional if not Admitted) </label>
+                                <input type="text" class="form-control @error('cot') is-invalid @enderror" id="cot"
+                                    name="cot" value="{{ old('cot') }}">
+                                @error('cot')
+                                    <div class="text-danger mt-1">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="col-md-12">
+                                <label for="diagnosis" class="form-label">Diagnosis & Remarks </label>
+                                <input type="text" class="form-control @error('diagnosis') is-invalid @enderror" id="diagnosis"
+                                    name="diagnosis" value="{{ old('diagnosis') }}">
+                                @error('diagnosis')
                                     <div class="text-danger mt-1">
                                         {{ $message }}
                                     </div>
@@ -37,10 +107,10 @@
                                 @enderror
                             </div>
                             <div class="col-md-12">
-                                <label for="birthdate" class="form-label">Date of birth</label>
-                                <input type="date" class="form-control @error('birthdate') is-invalid @enderror"
-                                    id="birthdate" name="birthdate" value="{{ old('birthdate') }}">
-                                @error('birthdate')
+                                <label for="umid" class="form-label">UMID Number</label>
+                                <input type="text" class="form-control @error('umid') is-invalid @enderror"
+                                    id="umid" name="umid" value="{{ old('umid') }}">
+                                @error('umid')
                                     <div class="text-danger mt-1">
                                         {{ $message }}
                                     </div>
@@ -60,7 +130,7 @@
                                 @enderror
                             </div>
                             <div class="col-md-12">
-                                <label for="job" class="form-label">Job</label>
+                                <label for="job" class="form-label">Designation</label>
                                 <input type="text" class="form-control @error('job') is-invalid @enderror" id="job"
                                     name="job" value="{{ old('job') }}">
                                 @error('job')

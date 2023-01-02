@@ -20,7 +20,7 @@
     <title>@yield('title')</title>
 </head>
 
-<body>
+<body style="background-image: url('/img/logo/sip1.jpg');background-repeat: no-repeat;background-size:cover;">
     <main>
         <div>
             @yield('content')

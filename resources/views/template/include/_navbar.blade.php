@@ -2,7 +2,7 @@
 <nav class="navbar navbar-expand navbar-light px-1 bg-white shadow-sm" style="height: 55px">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">
-            <img src="{{ asset('img/logo/sip.png') }}" alt="" width="40" height="40"
+            <img src="{{ asset('img/logo/sip.png') }}" alt="" width="50" height="40"
                 class="d-inline-block align-text-top">
         </a>
         <div id="menu-toggle">

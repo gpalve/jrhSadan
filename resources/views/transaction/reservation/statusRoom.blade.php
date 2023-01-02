@@ -1,5 +1,5 @@
-@extends('template.master')
-@section('title', 'Choose Room Reservation')
+@extends('template.open')
+@section('title', 'Status of Unoccupied Rooms')
 @section('head')
     <link rel="stylesheet" href="{{ asset('style/css/progress-indication.css') }}">
     <style>
@@ -17,12 +17,12 @@
     </style>
 @endsection
 @section('content')
-    @include('transaction.reservation.progressbar')
     <div class="container mt-3">
         <div class="row justify-content-md-center">
             <div class="col-md-8 mt-2">
                 <div class="card shadow-sm border">
                     <div class="card-body p-3">
+                        <center><img src="/img/logo/login.png" width="40%" class="mt-3" /> </center> <hr>
                         <h2>{{ $roomsCount }} Room Available for</h2>
                         <p>{{ request()->input('count_person') }}
                             {{ Helper::plural('People', request()->input('count_person')) }} on
@@ -30,13 +30,13 @@
                             {{ Helper::dateFormat(request()->input('check_out')) }}</p>
                         <hr>
                         <form method="GET"
-                            action="{{ route('transaction.reservation.chooseRoom', ['customer' => $customer->id]) }}">
+                            action="{{ route('transaction.reservation.statusRoom') }}">
                             <div class="row mb-2">
                                 <input type="text" hidden name="count_person"
                                     value="{{ request()->input('count_person') }}">
                                 <input type="date" hidden name="check_in" value="{{ request()->input('check_in') }}">
                                 <input type="date" hidden name="check_out" value="{{ request()->input('check_out') }}">
-                                <div class="col-lg-6">
+                                {{-- <div class="col-lg-6">
                                     <select class="form-select" id="sort_name" name="sort_name"
                                         aria-label="Default select example">
                                         <option value="Price" @if (request()->input('sort_name') == 'Price') selected @endif>Price</option>
@@ -53,7 +53,7 @@
                                 </div>
                                 <div class="col-lg-2">
                                     <button type="submit" class="btn myBtn shadow-sm border w-100">Search</button>
-                                </div>
+                                </div> --}}
                             </div>
                         </form>
                         <div class="row">
@@ -71,8 +71,8 @@
                                             <div class="wrapper">
                                                 <p class="card-text mb-auto demo-1">{{ $room->view }}</p>
                                             </div>
-                                            <a href="{{ route('transaction.reservation.confirmation', ['customer' => $customer->id, 'room' => $room->id, 'from' => request()->input('check_in'), 'to' => request()->input('check_out'),'memberCount' => request()->input('count_person')]) }}"
-                                                class="btn btn-info myBtn shadow-lg border w-100 m-2">Select this Room</a>
+                                            {{-- <a href="{{ route('transaction.reservation.confirmation', ['customer' => $customer->id, 'room' => $room->id, 'from' => request()->input('check_in'), 'to' => request()->input('check_out'),'memberCount' => request()->input('count_person')]) }}"
+                                                class="btn btn-info myBtn shadow-lg border w-100 m-2">Select this Room</a> --}}
                                         </div>
                                         <div class="col-auto d-none d-lg-block">
                                             <img src="{{ $room->firstImage() }}" width="200" height="250" alt="">
@@ -99,55 +99,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mt-2">
-                <div class="card shadow-lg">
-                    <img src="{{ $customer->user->getAvatar() }}"
-                        style="border-top-right-radius: 0.5rem; border-top-left-radius: 0.5rem">
-                    <div class="card-body">
-                        <table>
-                            <tr>
-                                <td style="text-align: center; width:50px">
-                                    <span>
-                                        <i class="fas {{ $customer->gender == 'Male' ? 'fa-male' : 'fa-female' }}">
-                                        </i>
-                                    </span>
-                                </td>
-                                <td>
-                                    {{ $customer->name }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; ">
-                                    <span>
-                                        <i class="fas fa-user-md"></i>
-                                    </span>
-                                </td>
-                                <td>{{ $customer->job }}</td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; ">
-                                    <span>
-                                        <i class="fas fa-birthday-cake"></i>
-                                    </span>
-                                </td>
-                                <td>
-                                    {{ $customer->umid }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; ">
-                                    <span>
-                                        <i class="fas fa-map-marker-alt"></i>
-                                    </span>
-                                </td>
-                                <td>
-                                    {{ $customer->address }}
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
+          
         </div>
     </div>
 @endsection

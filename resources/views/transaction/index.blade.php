@@ -5,14 +5,19 @@
         <div class="col-lg-6 mb-2">
             <div class="d-grid gap-2 d-md-block">
                 <span data-bs-toggle="tooltip" data-bs-placement="right" title="Add Room Reservation">
-                    <button type="button" class="btn btn-sm shadow-sm myBtn border rounded" data-bs-toggle="modal"
+                    <button type="button" class="btn btn-success shadow-sm myBtn border rounded" data-bs-toggle="modal"
                         data-bs-target="#staticBackdrop">
-                        <i class="fas fa-plus"></i>
+                        <i class="fas fa-plus"></i> &nbsp; New Room Booking
                     </button>
                 </span>
-                <span data-bs-toggle="tooltip" data-bs-placement="right" title="Payment History">
+                {{-- <span data-bs-toggle="tooltip" data-bs-placement="right" title="Payment History">
                     <a href="{{route('payment.index')}}" class="btn btn-sm shadow-sm myBtn border rounded">
                         <i class="fas fa-history"></i>
+                    </a>
+                </span> --}}
+                <span data-bs-toggle="tooltip" data-bs-placement="right" title="Payment History">
+                    <a href="/approver" class="btn btn-info shadow-sm myBtn border rounded">
+                        <i class="fas fa-history"></i> &nbsp; Pending Approvals
                     </a>
                 </span>
             </div>
@@ -27,28 +32,31 @@
     </div>
     <div class="row my-2 mt-4 ms-1">
         <div class="col-lg-12">
-            <h5>Active Guests: </h5>
+            <h5><b>Confirm Patient:</b> </h5>
         </div>
     </div>
-    <div class="row">
+    <div class="row" style="background-color: #11aa11">
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-sm table-hover">
-                            <thead>
+                            <thead class="table-secondary">
                                 <tr>
                                     <th>#</th>
                                     <th>ID</th>
-                                    <th>Customer</th>
+                                    <th>Patient</th>
                                     <th>Room</th>
                                     <th>Check In</th>
                                     <th>Check Out</th>
-                                    <th>Days</th>
-                                    <th>Total Price</th>
-                                    <th>Paid Off</th>
-                                    <th>Debt</th>
-                                    <th>Action</th>
+                                    <th>Total Stay Period</th>
+                                    <th>Referred By Dr</th>
+                                    <th>Diagnosis</th>
+                                    <th>Ward/Cot</th>
+                                    <th>Desig</th>
+                                    <th>UMID</th>
+                                    {{-- <th>Debt</th> --}}
+                                    <th style="text-align: center;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -63,14 +71,22 @@
                                         <td>{{ Helper::dateFormat($transaction->check_out) }}</td>
                                         <td>{{ $transaction->getDateDifferenceWithPlural($transaction->check_in, $transaction->check_out) }}
                                         </td>
-                                        <td>{{ Helper::convertToRupiah($transaction->getTotalPrice()) }}
+                                        <td>{{ $transaction->customer->ref }}
                                         </td>
                                         <td>
-                                            {{ Helper::convertToRupiah($transaction->getTotalPayment()) }}
+                                            {{ $transaction->customer->diagnosis }}
                                         </td>
-                                        <td>{{ $transaction->getTotalPrice() - $transaction->getTotalPayment() <= 0 ? '-' : Helper::convertToRupiah($transaction->getTotalPrice() - $transaction->getTotalPayment()) }}
-                                        </td>
-                                        <td>
+                                        <td>Ward -{{$transaction->customer->ward }} Cot - {{$transaction->customer->cot}}</td>
+                                        <td>{{$transaction->customer->job }}</td>
+                                        <td>{{$transaction->customer->umid }}</td>
+                                        {{-- <td>{{ $transaction->getTotalPrice() - $transaction->getTotalPayment() <= 0 ? '-' : Helper::convertToRupiah($transaction->getTotalPrice() - $transaction->getTotalPayment()) }}
+                                        </td> --}}
+                                        <td style="text-align: center;">
+                                            
+                                            <a href="/generate/{{$transaction->id}}/{{ $transaction->customer->id }}"><span class="btn btn-sm bg-success badge-success">Generate  Letter</span></a>
+
+                                            <a href="/{{$transaction->customer->id}}/viewCountPerson"><span class="btn btn-sm bg-warning badge-success">Extension</span></a>
+
                                             <a class="btn btn-light btn-sm rounded shadow-sm border p-1 m-0 {{$transaction->getTotalPrice() - $transaction->getTotalPayment() <= 0 ? 'disabled' : ''}}"
                                                 href="{{ route('transaction.payment.create', ['transaction' => $transaction->id]) }}"
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Pay">
@@ -95,28 +111,105 @@
     </div>
     <div class="row my-2 mt-4 ms-1">
         <div class="col-lg-12">
-            <h5>Expired: </h5>
+            <h5> <b>Approval Pending:</b> </h5>
         </div>
     </div>
-    <div class="row">
+    <div class="row" style="background-color: #e6e957">
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-sm table-hover">
-                            <thead>
+                            <thead class="table-secondary">
                                 <tr>
                                     <th>#</th>
                                     <th>ID</th>
-                                    <th>Customer</th>
+                                    <th>Patient</th>
                                     <th>Room</th>
                                     <th>Check In</th>
                                     <th>Check Out</th>
-                                    <th>Days</th>
-                                    <th>Total Price</th>
-                                    <th>Paid Off</th>
-                                    <th>Debt</th>
+                                    <th>Total Stay Period</th>
+                                    <th>Referred By Dr</th>
+                                    <th>Diagnosis</th>
+                                    <th>Ward/Cot</th>
+                                    <th>Desig</th>
+                                    <th>UMID</th>
+                                    {{-- <th>Debt</th> --}}
                                     <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($pendingTransactions as $pendingTransaction)
+                                    <tr>
+                                        <th>{{ ($pendingTransactions->currentpage() - 1) * $pendingTransactions->perpage() + $loop->index + 1 }}
+                                        </th>
+                                        <td>{{ $pendingTransaction->id }}</td>
+                                        <td>{{ $pendingTransaction->customer->name }}</td>
+                                        <td>{{ $pendingTransaction->room->number }}</td>
+                                        <td>{{ Helper::dateFormat($pendingTransaction->check_in) }}</td>
+                                        <td>{{ Helper::dateFormat($pendingTransaction->check_out) }}</td>
+                                        <td>{{ $transaction->getDateDifferenceWithPlural($pendingTransaction->check_in, $pendingTransaction->check_out) }}
+                                        </td>
+                                        <td>{{ $transaction->customer->ref }}
+                                        </td>
+                                        <td>
+                                            {{ $transaction->customer->diagnosis }}
+                                        </td>
+                                        <td>Ward -{{$transaction->customer->ward }} Cot - {{$transaction->customer->cot}}</td>
+                                        <td>{{$transaction->customer->job }}</td>
+                                        <td>{{$transaction->customer->umid }}</td>
+                                        {{-- <td>{{ $pendingTransaction->getTotalPrice() - $pendingTransaction->getTotalPayment() <= 0 ? '-' : Helper::convertToRupiah($pendingTransaction->getTotalPrice() - $pendingTransaction->getTotalPayment()) }}
+                                        </td> --}}
+                                        <td>
+                                            <a class="btn btn-light btn-sm rounded shadow-sm border p-1 m-0 {{$pendingTransaction->getTotalPrice() - $pendingTransaction->getTotalPayment() <= 0 ? 'disabled' : ''}}"
+                                                href="{{ route('transaction.payment.create', ['transaction' => $pendingTransaction->id]) }}"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Pay">
+                                                <i class="fas fa-money-bill-wave-alt"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="15" class="text-center">
+                                            There's no data in this table
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                        {{ $transactions->onEachSide(2)->links('template.paginationlinks') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row my-2 mt-4 ms-1">
+        <div class="col-lg-12">
+            <h5><b>Overdue:</b> </h5>
+        </div>
+    </div>
+    <div class="row" style="background-color: #e5561e">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-secondary">
+                                <tr>
+                                    <th>#</th>
+                                    <th>ID</th>
+                                    <th>Patient</th>
+                                    <th>Room</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                    <th>Total Stay Period</th>
+                                    <th>Referred By Dr</th>
+                                    <th>Diagnosis</th>
+                                    <th>Ward/Cot</th>
+                                    <th>Desig</th>
+                                    <th>UMID</th>
+                                    {{-- <th>Debt</th> --}}
+                                    <th style="text-align: center;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -131,14 +224,22 @@
                                     <td>{{ Helper::dateFormat($transaction->check_out) }}</td>
                                     <td>{{ $transaction->getDateDifferenceWithPlural($transaction->check_in, $transaction->check_out) }}
                                     </td>
-                                    <td>{{ Helper::convertToRupiah($transaction->getTotalPrice()) }}
+                                    <td>{{ $transaction->customer->ref }}
                                     </td>
                                     <td>
-                                        {{ Helper::convertToRupiah($transaction->getTotalPayment()) }}
+                                        {{ $transaction->customer->diagnosis }}
                                     </td>
-                                    <td>{{ $transaction->getTotalPrice() - $transaction->getTotalPayment() <= 0 ? '-' : Helper::convertToRupiah($transaction->getTotalPrice($transaction->room->price, $transaction->check_in, $transaction->check_out) - $transaction->getTotalPayment()) }}
-                                    </td>
-                                    <td>
+                                    <td>Ward -{{$transaction->customer->ward }} Cot - {{$transaction->customer->cot}}</td>
+                                    <td>{{$transaction->customer->job }}</td>
+                                    <td>{{$transaction->customer->umid }}</td>
+                                    {{-- <td>{{ $transaction->getTotalPrice() - $transaction->getTotalPayment() <= 0 ? '-' : Helper::convertToRupiah($transaction->getTotalPrice($transaction->room->price, $transaction->check_in, $transaction->check_out) - $transaction->getTotalPayment()) }}
+                                    </td> --}}
+                                    <td style="text-align: center;">
+
+                                        <a href="/generate/{{$transaction->id}}/{{ $transaction->customer->id }}"><span class="btn btn-sm bg-success badge-success">Generate  Letter</span></a>
+
+                                        <a href="/{{$transaction->customer->id}}/viewCountPerson"><span class="btn btn-sm bg-warning badge-success">Extension</span></a>
+
                                         <a class="btn btn-light btn-sm rounded shadow-sm border p-1 m-0 {{$transaction->getTotalPrice($transaction->room->price, $transaction->check_in, $transaction->check_out) - $transaction->getTotalPayment() <= 0 ? 'disabled' : ''}}"
                                             href="{{ route('transaction.payment.create', ['transaction' => $transaction->id]) }}"
                                             data-bs-toggle="tooltip" data-bs-placement="top" title="Pay">

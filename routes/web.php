@@ -18,6 +18,8 @@ use App\Http\Controllers\RoomStatusController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ApproverController;
+use App\Http\Controllers\MemberController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -48,9 +50,21 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
         Route::post('/storeCustomer', [TransactionRoomReservationController::class, 'storeCustomer'])->name('storeCustomer');
         Route::get('/{customer}/viewCountPerson', [TransactionRoomReservationController::class, 'viewCountPerson'])->name('viewCountPerson');
         Route::get('/{customer}/chooseRoom', [TransactionRoomReservationController::class, 'chooseRoom'])->name('chooseRoom');
-        Route::get('/{customer}/{room}/{from}/{to}/confirmation', [TransactionRoomReservationController::class, 'confirmation'])->name('confirmation');
+        Route::get('/viewStatusRoom', [TransactionRoomReservationController::class, 'viewStatusRoom'])->name('viewStatusRoom')->withoutMiddleware(['auth', 'checkRole:Super,Admin']);
+        Route::get('/statusRoom', [TransactionRoomReservationController::class, 'statusRoom'])->name('statusRoom')->withoutMiddleware(['auth', 'checkRole:Super,Admin']);
+        Route::get('/{customer}/{room}/{from}/{to}/{memberCount}/confirmation', [TransactionRoomReservationController::class, 'confirmation'])->name('confirmation');
         Route::post('/{customer}/{room}/payDownPayment', [TransactionRoomReservationController::class, 'payDownPayment'])->name('payDownPayment');
+        Route::post('/{customer}/{room}/pendingApprove', [TransactionRoomReservationController::class, 'pendingApprove'])->name('pendingApprove');
     });
+
+//approving section
+    Route::get('/approver', [ApproverController::class, 'index'])->name('approver');
+    Route::any('/approver/{id}', [ApproverController::class, 'approve'])->name('customer.approve');
+    Route::any('/approver-reject/{id}', [ApproverController::class, 'reject'])->name('customer.reject');
+
+// Generate Form  
+
+Route::get('/generate/{tid}/{cid}', [ApproverController::class, 'generate'])->name('generate-form');
 
     Route::resource('customer', CustomerController::class);
     Route::resource('type', TypeController::class);
@@ -58,6 +72,9 @@ Route::group(['middleware' => ['auth', 'checkRole:Super,Admin']], function () {
     Route::resource('roomstatus', RoomStatusController::class);
     Route::resource('transaction', TransactionController::class);
     Route::resource('facility', FacilityController::class);
+    //Route::resource('member', MemberController::class);
+    Route::any('/add-member/{id}', [MemberController::class, 'addMember'])->name('member.add');
+
 
     Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
     Route::get('/payment/{payment}/invoice', [PaymentController::class, 'invoice'])->name('payment.invoice');

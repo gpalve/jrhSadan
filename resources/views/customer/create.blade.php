@@ -32,10 +32,10 @@
                             @enderror
                         </div>
                         <div class="col-md-12">
-                            <label for="birthdate" class="form-label">Date of birth</label>
-                            <input type="date" class="form-control @error('birthdate') is-invalid @enderror" id="birthdate"
-                                name="birthdate" value="{{ old('birthdate') }}">
-                            @error('birthdate')
+                            <label for="umid" class="form-label">Date of birth</label>
+                            <input type="date" class="form-control @error('umid') is-invalid @enderror" id="umid"
+                                name="umid" value="{{ old('umid') }}">
+                            @error('umid')
                                 <div class="text-danger mt-1">
                                     {{ $message }}
                                 </div>

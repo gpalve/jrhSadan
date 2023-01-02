@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 class TransactionRepository
 {
-    public function store($request, Customer $customer, Room $room)
+    public function store($request, Customer $customer, Room $room, $room_status)
     {
         $transaction = Transaction::create([
             'user_id' => auth()->user()->id,
@@ -17,7 +17,8 @@ class TransactionRepository
             'room_id' => $room->id,
             'check_in' => $request->check_in,
             'check_out' => $request->check_out,
-            'status' => 'Reservation'
+            'status' => 'Reservation',
+            'room_status' => $room_status
         ]);
 
         return $transaction;
@@ -25,7 +26,7 @@ class TransactionRepository
 
     public function getTransaction($request)
     {
-        $transactions = Transaction::with('user', 'room', 'customer')->where('check_out', '>=', Carbon::now());
+        $transactions = Transaction::with('user', 'room', 'customer')->where('room_status','2')->where('check_out', '>=', Carbon::now());
 
         if (!empty($request->search)) {
             $transactions = $transactions->where('id', '=', $request->search);
@@ -36,6 +37,19 @@ class TransactionRepository
 
         return $transactions;
     }
+    public function getPendingTransaction($request)
+    {
+        $pendingTransactions = Transaction::with('user', 'room', 'customer')->where('room_status','1')->where('check_out', '>=', Carbon::now());
+
+        if (!empty($request->search)) {
+            $pendingTransactions = $pendingTransactions->where('id', '=', $request->search);
+        }
+
+        $pendingTransactions = $pendingTransactions->orderBy('check_out', 'DESC')->orderBy('id', 'DESC')->paginate(20);
+        $pendingTransactions->appends($request->all());
+
+        return $pendingTransactions;
+    }
 
     public function getTransactionExpired($request)
     {
@@ -45,7 +59,7 @@ class TransactionRepository
             $transactionsExpired = $transactionsExpired->where('id', '=', $request->search);
         }
 
-        $transactionsExpired = $transactionsExpired->orderBy('check_out', 'ASC')->paginate(20);
+        $transactionsExpired = $transactionsExpired->orderBy('check_out', 'DESC')->orderBy('id', 'DESC')->paginate(20);
         $transactionsExpired->appends($request->all());
 
         return $transactionsExpired;

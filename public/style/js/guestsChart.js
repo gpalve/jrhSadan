@@ -30,6 +30,7 @@ $(function() {
             var this_year = $('#visitors-chart').attr('this-year')
             var this_month = $('#visitors-chart').attr('this-month')
             var visitorsChart = $('#visitors-chart')
+            console.log('HERE1');
             var myVisitorChart = new Chart(visitorsChart, {
                 data: {
                     labels: response.day,

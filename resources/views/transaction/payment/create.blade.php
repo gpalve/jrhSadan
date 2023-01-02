@@ -70,10 +70,10 @@
                                     action="{{ route('transaction.payment.store', ['transaction' => $transaction->id]) }}">
                                     @csrf
                                     <div class="row mb-3">
-                                        <label for="payment" class="col-sm-2 col-form-label">Pay</label>
+                                        <label for="payment" class="col-sm-2 col-form-label">Enter MR Number</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control @error('payment') is-invalid @enderror"
-                                                placeholder="Input payment" value="" id="payment" name="payment">
+                                            <input type="number" class="form-control @error('payment') is-invalid @enderror"
+                                                placeholder="Enter MR Number" value="" id="payment" name="payment">
                                         </div>
                                     </div>
                                     <div class="row mb-3">
@@ -85,7 +85,7 @@
                                             {{ $message }}
                                         </div>
                                     @enderror
-                                    <button class="btn btn-success float-end">Pay</button>
+                                    <button class="btn btn-success float-end">Submit MR number after Payment</button>
                                 </form>
                             </div>
                         </div>
@@ -125,7 +125,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    {{ $transaction->customer->birthdate }}
+                                    {{ $transaction->customer->umid }}
                                 </td>
                             </tr>
                             <tr>
@@ -147,12 +147,12 @@
 @endsection
 @section('footer')
 <script src="{{ asset('style/js/jquery.js') }}"></script>
-<script>
+{{-- <script>
     $('#payment').keyup(function() {
         $('#showPaymentType').text('Rp. ' + parseFloat($(this).val(), 10).toFixed(2).replace(
                 /(\d)(?=(\d{3})+\.)/g, "$1,")
             .toString());
     });
 
-</script>
+</script> --}}
 @endsection

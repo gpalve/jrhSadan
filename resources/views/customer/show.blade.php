@@ -11,9 +11,16 @@
                     <div class="col-md-4 mb-md-0 p-md-4">
                         <img src="{{ $customer->user->getAvatar() }}" class="w-100" alt="...">
                     </div>
-                    <div class="col-md-8 p-4 ps-md-0">
-                        <h5 class="mt-0">{{ $customer->job }}</h5>
-                        <p> {{ $customer->address }} </p>
+                    <div class="col-md-8 p-2 ps-md-0">
+                        <h3>Details </h3> <hr>
+                        <ul>Designation- {{ $customer->job }}</ul>
+                        <ul> Diagnosis- {{ $customer->diagnosis }}  </ul>
+                        <ul> Ward - {{ $customer->ward }}  </ul>
+                        <ol> Cot {{ $customer->cot }}  </ol>
+                        <ol> Attendant - {{ $customer->pname }}  </ol>
+                        <ol> Gender -{{ $customer->gender }}  </ol>
+                        <ol> UMID - {{ $customer->umid }}  </ol>
+                        <ul>Address -{{ $customer->address }} </ul>
                     </div>
                 </div>
             </div>

@@ -32,7 +32,7 @@ class PaymentController extends Controller
     {
         $insufficient = $transaction->getTotalPrice() - $transaction->getTotalPayment();
         $request->validate([
-            'payment' => 'required|numeric|lte:' . $insufficient
+            'payment' => 'required:' . $insufficient
         ]);
 
         $this->paymentRepository->store($request, $transaction, 'Payment');

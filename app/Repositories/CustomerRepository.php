@@ -41,7 +41,7 @@ class CustomerRepository
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->birthdate),
+            'password' => bcrypt($request->umid),
             'role' => 'Customer',
             'random_key' => Str::random(60)
         ]);
@@ -61,9 +61,16 @@ class CustomerRepository
 
         $customer = Customer::create([
             'name' => $user->name,
+            'ref' => $request->ref,
+            'letter_num' => $request->letter_num,
+            'relation' => $request->relation,
+            'pname' => $request->pname,
+            'ward' => $request->ward,
+            'cot' => $request->cot,
+            'diagnosis' => $request->diagnosis,
             'address' => $request->address,
             'job' => $request->job,
-            'birthdate' => $request->birthdate,
+            'umid' => $request->umid,
             'gender' => $request->gender,
             'user_id' => $user->id
         ]);

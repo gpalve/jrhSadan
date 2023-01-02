@@ -53,7 +53,7 @@
                                                     <td><i class="fas fa-birthday-cake"></i></td>
                                                     <td>
                                                         <span>
-                                                            {{ $customer->birthdate }}
+                                                            {{ $customer->umid }}
                                                         </span>
                                                     </td>
                                                 </tr>

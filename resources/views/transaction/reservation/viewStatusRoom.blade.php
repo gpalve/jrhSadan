@@ -1,12 +1,15 @@
-@extends('template.master')
-@section('title', 'Count Person')
+@extends('template.open')
+
 @section('head')
     <link rel="stylesheet" href="{{ asset('style/css/progress-indication.css') }}">
 @endsection
-
 @section('content')
-    @include('transaction.reservation.progressbar')
+
     <div class="container mt-3">
+        <center>
+            <center><img src="/img/logo/login.png" width="40%" class="mt-3" /> </center>
+            <hr><h4>Check Status of Available Rooms</h4>
+        </center> <hr>
         <div class="row justify-content-md-center">
             <div class="col-md-8 mt-2">
                 <div class="card shadow-sm border">
@@ -35,7 +38,7 @@
                                 </div>
                             </form> --}}
                                 <form class="row g-3" method="GET"
-                                    action="{{ route('transaction.reservation.chooseRoom', ['customer' => $customer->id]) }}">
+                                    action="{{ route('transaction.reservation.statusRoom') }}">
                                     <div class="col-md-12">
                                         <label for="count_person" class="form-label">
                                             How many person?
@@ -56,7 +59,7 @@
                                             From
                                         </label>
                                         <input type="date" class="form-control @error('check_in') is-invalid @enderror" id="
-                                                check_in" name="check_in" max='2000-13-13' value="{{ old('check_in') }}">
+                                                check_in" name="check_in" value="{{ old('check_in') }}">
                                         @error('check_in')
                                             <div class="text-danger mt-1">
                                                 {{ $message }}
@@ -82,8 +85,7 @@
                     </div>
                 </div>
             </div>
-          
-            <div class="col-md-4 mt-2">
+            {{-- <div class="col-md-4 mt-2">
                 <div class="card shadow-sm">
                     <img src="{{ $customer->user->getAvatar() }}"
                         style="border-top-right-radius: 0.5rem; border-top-left-radius: 0.5rem">
@@ -131,7 +133,7 @@
                         </table>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 @endsection

@@ -19,7 +19,7 @@ class CustomerController extends Controller
     }
 
     public function index(Request $request)
-    {
+    {   
         $customers = $this->customerRepository->get($request);
         return view('customer.index', compact('customers'));
     }

@@ -6,11 +6,13 @@ use App\Events\NewReservationEvent;
 use App\Events\RefreshDashboardEvent;
 use App\Helpers\Helper;
 use App\Http\Requests\ChooseRoomRequest;
+use App\Http\Requests\statusRoomRequest;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Models\Customer;
 use App\Models\Room;
 use App\Models\Transaction;
 use App\Models\User;
+use Carbon\Carbon;
 use App\Notifications\NewRoomReservationDownPayment;
 use App\Repositories\CustomerRepository;
 use App\Repositories\PaymentRepository;
@@ -50,25 +52,51 @@ class TransactionRoomReservationController extends Controller
         return view('transaction.reservation.viewCountPerson', compact('customer'));
     }
 
+    public function viewStatusRoom(Customer $customer)
+    {
+        return view('transaction.reservation.viewStatusRoom');
+    }
+
     public function chooseRoom(ChooseRoomRequest $request, Customer $customer)
     {
         $stayFrom = $request->check_in;
         $stayUntil = $request->check_out;
+        $memberCount = $request->count_person;
+
+        if(Carbon::parse($stayFrom)->diffInDays(Carbon::parse($stayUntil)) > 16)
+            return '<script>alert("Maximum 15 Days slot is allowed")</script>';
 
         $occupiedRoomId = $this->getOccupiedRoomID($request->check_in, $request->check_out);
 
         $rooms = $this->reservationRepository->getUnocuppiedroom($request, $occupiedRoomId);
         $roomsCount = $this->reservationRepository->countUnocuppiedroom($request, $occupiedRoomId);
 
-        return view('transaction.reservation.chooseRoom', compact('customer', 'rooms', 'stayFrom', 'stayUntil', 'roomsCount'));
+        return view('transaction.reservation.chooseRoom', compact('customer', 'rooms', 'stayFrom', 'stayUntil', 'roomsCount','memberCount'));
     }
 
-    public function confirmation(Customer $customer, Room $room, $stayFrom, $stayUntil)
+    public function statusRoom(statusRoomRequest $request)
+    {
+        $stayFrom = $request->check_in;
+        $stayUntil = $request->check_out;
+        $memberCount = $request->count_person;
+
+        if(Carbon::parse($stayFrom)->diffInDays(Carbon::parse($stayUntil)) > 16)
+            return '<script>alert("Maximum 15 Days slot is allowed")</script>';
+
+        $occupiedRoomId = $this->getOccupiedRoomID($request->check_in, $request->check_out);
+
+        $rooms = $this->reservationRepository->getUnocuppiedroom($request, $occupiedRoomId);
+        $roomsCount = $this->reservationRepository->countUnocuppiedroom($request, $occupiedRoomId);
+
+        return view('transaction.reservation.statusRoom', compact('rooms', 'stayFrom', 'stayUntil', 'roomsCount','memberCount'));
+    }
+
+    public function confirmation(Customer $customer, Room $room, $stayFrom, $stayUntil , $memberCount)
     {
         $price = $room->price;
         $dayDifference = Helper::getDateDifference($stayFrom, $stayUntil);
         $downPayment = ($price * $dayDifference) * 0.15;
-        return view('transaction.reservation.confirmation', compact('customer', 'room', 'stayFrom', 'stayUntil', 'downPayment', 'dayDifference'));
+        return view('transaction.reservation.confirmation', compact('customer', 'room', 'stayFrom', 'stayUntil', 'downPayment', 'dayDifference','memberCount'));
     }
 
     public function payDownPayment(Customer $customer, Room $room, Request $request, TransactionRepository $transactionRepository, PaymentRepository $paymentRepository)
@@ -104,6 +132,14 @@ class TransactionRoomReservationController extends Controller
         return redirect()->route('transaction.index')->with('success', 'Room ' . $room->number . ' has been reservated by ' . $customer->name);
     }
 
+
+  public function pendingApprove(Customer $customer, Room $room, Request $request, TransactionRepository $transactionRepository, PaymentRepository $paymentRepository)
+  {
+      //room_status 1 means user sent for approval
+      $room_status = "1";
+    $transaction = $transactionRepository->store($request, $customer, $room, $room_status);
+    return redirect()->route('transaction.index')->with('success', 'Room ' . $room->number . ' has been reservated by ' . $customer->name);
+  }
     private function getOccupiedRoomID($stayFrom, $stayUntil)
     {
         $occupiedRoomId = Transaction::where([['check_in', '<=', $stayFrom], ['check_out', '>=', $stayUntil]])

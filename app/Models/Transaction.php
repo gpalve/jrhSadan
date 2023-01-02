@@ -18,7 +18,8 @@ class Transaction extends Model
         'room_id',
         'check_in',
         'check_out',
-        'status'
+        'status',
+        'room_status'
     ];
 
     public function user()

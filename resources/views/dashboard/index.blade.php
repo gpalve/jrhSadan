@@ -5,20 +5,21 @@
 @endsection
 @section('content')
     <div id="dashboard">
+       
         <div class="row">
             <div class="col-lg-6 mb-3">
                 <div class="row mb-3">
                     <div class="col-lg-6">
-                        <div class="card shadow-sm border" style="border-radius: 0.5rem">
+                        <div class="card shadow-lg border" style="border-radius: 0.5rem">
                             <div class="card-body">
-                                <h5>{{ count($transactions) }} Guests this day</h5>
+                                <h5 class="text-center">Total Active Guests {{ count($transactions) }} </h5>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <div class="card shadow-sm border" style="border-radius: 0.5rem">
+                        <div class="card shadow-lg border" style="border-radius: 0.5rem">
                             <div class="card-body text-center">
-                                <h5>Dashboard</h5>
+                                <h5> Total Rooms {{ count($total_rooms)}} </h5>
                             </div>
                             <!-- /.info-box-content -->
                         </div>
@@ -27,11 +28,11 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-lg-12">
-                        <div class="card shadow-sm border">
+                        <div class="card shadow-lg border">
                             <div class="card-header">
                                 <div class="row ">
                                     <div class="col-lg-12 d-flex justify-content-between">
-                                        <h3>Today Guests</h3>
+                                        <h3>Active Patients / Attendees</h3>
                                         <div>
                                             <a href="#" class="btn btn-tool btn-sm">
                                                 <i class="fas fa-download"></i>
@@ -50,9 +51,10 @@
                                             <th></th>
                                             <th>Name</th>
                                             <th>Room</th>
-                                            <th class="text-center">Stay</th>
+                                            <th>Stay Period [From - To]</th>
+                                            <th>Total Days</th>
                                             <th>Day Left</th>
-                                            <th>Debt</th>
+                                            {{-- <th>Debt</th> --}}
                                             <th class="text-center">Status</th>
                                         </tr>
                                     </thead>
@@ -77,21 +79,25 @@
                                                     {{ Helper::dateFormat($transaction->check_in) }} ~
                                                     {{ Helper::dateFormat($transaction->check_out) }}
                                                 </td>
-                                                <td>{{ Helper::getDateDifference(now(), $transaction->check_out) == 0 ? 'Last Day' :  Helper::getDateDifference(now(), $transaction->check_out). ' '. Helper::plural('Day', Helper::getDateDifference(now(), $transaction->check_out))}}
-                                                </td>
                                                 <td>
-                                                    {{ $transaction->getTotalPrice() - $transaction->getTotalPayment() <= 0 ? '-' : Helper::convertToRupiah($transaction->getTotalPrice() - $transaction->getTotalPayment()) }}
+                                                    {{ $transaction->getDateDifferenceWithPlural($transaction->check_in, $transaction->check_out) }}
                                                 </td>
+                                                <td @if(Helper::getDateDifference(now(), $transaction->check_out) < 3) style="background:rgb(237, 145, 145)" @endif>
+                                                    <strong>{{ Helper::getDateDifference(now(), $transaction->check_out) == 0 ? 'Last Day' :  Helper::getDateDifference(now(), $transaction->check_out). ' '. Helper::plural('Day', Helper::getDateDifference(now(), $transaction->check_out))}} </strong>
+                                                </td>
+                                                {{-- <td>
+                                                    {{ $transaction->getTotalPrice() - $transaction->getTotalPayment() <= 0 ? '-' : Helper::convertToRupiah($transaction->getTotalPrice() - $transaction->getTotalPayment()) }}
+                                                </td> --}}
                                                 <td>
                                                     <span
-                                                        class="justify-content-center badge {{ $transaction->getTotalPrice() - $transaction->getTotalPayment() == 0 ? 'bg-success' : 'bg-warning' }}">
-                                                        {{ $transaction->getTotalPrice() - $transaction->getTotalPayment() == 0 ? 'Success' : 'Progress' }}
+                                                        class="justify-content-center badge {{ $transaction->getTotalPrice() - $transaction->getTotalPayment() == 0 ? 'bg-success' : 'bg-primary' }}">
+                                                        {{ $transaction->getTotalPrice() - $transaction->getTotalPayment() == 0 ? 'Success' : 'Occupied' }}
                                                     </span>
-                                                    @if (Helper::getDateDifference(now(), $transaction->check_out) < 1)
+                                                    {{-- @if (Helper::getDateDifference(now(), $transaction->check_out) < 1)
                                                         <span class="justify-content-center badge bg-danger">
                                                             must finish payment
                                                         </span>
-                                                    @endif
+                                                    @endif --}}
                                                 </td>
                                             </tr>
                                         @empty
@@ -121,13 +127,41 @@
                 </div>
             </div>
 
-            <div class="col-lg-6">
+            <div class="col-lg-6 mb-3">
+                <div class="row mb-3">
+                    <div class="col-lg-6">
+                        <div class="card shadow-lg border" style="border-radius: 0.5rem">
+                            <div class="card-body">
+                                <h5 class="text-center"> Total Vacant {{ count($blade_vacant) }} </h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card shadow-lg border" style="border-radius: 0.5rem">
+                            <div class="card-body text-center">
+                                <h5>Dashboard</h5>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box border -->
+                    </div>
+                </div>
                 <div class="row mb-3">
                     <div class="col-lg-12">
-                        <div class="card shadow-sm border">
-                            <div class="card-header border-0">
-                                <div class="d-flex justify-content-between">
-                                    <h3 class="card-title">Monthly Guests Chart</h3>
+                        <div class="card shadow-lg border">
+                            <div class="card-header">
+                                <div class="row ">
+                                    <div class="col-lg-12 d-flex justify-content-between">
+                                        <h3>Monthly Guest Charts</h3>
+                                        <div>
+                                            <a href="#" class="btn btn-tool btn-sm">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-tool btn-sm">
+                                                <i class="fas fa-bars"></i>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -145,9 +179,9 @@
                                 </div>
                                 <div class="position-relative mb-4">
                                     <canvas this-year="{{ Helper::thisYear() }}"
-                                        this-month="{{ Helper::thisMonth() }}" id="visitors-chart" height="400"
+                                        this-month="{{ Helper::thisMonth() }}" id="visitors-chart" height="500"
                                         width="100%" class="chartjs-render-monitor"
-                                        style="display: block; width: 249px; height: 200px;"></canvas>
+                                        style="display: block; width: 249px; height: 245px;"></canvas>
                                 </div>
                                 <div class="d-flex flex-row justify-content-between">
                                     <span class="mr-2">
@@ -161,7 +195,143 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-lg-12">
+
+                    </div>
+                </div>
             </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-4">
+                <div class="row mb-3">
+                    <div class="col-lg-12">
+                        <div class="card shadow-lg border">
+                            <div class="card-header border-0">
+                                <div class="d-flex justify-content-between">
+                                    <h3 class="card-title">Not Alloted</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+            
+                                    @forelse ($blade_vacant as $v)
+                                    @foreach($v as $vi)
+                                    <div class="col-md-3 mb-2">
+                                       <a href="#" style="text-decoration:none;">
+                                        
+                                        <div class="card" style="width: 9rem;background-color:#aaffaa">
+                                            <div class="card-body">
+                                              <h5 class="card-title">{{ $vi->number }}</h5>
+                                            
+                                              {{-- <a href="{{route('room.show', ['room'=>$transaction->room->id])}}" class="btn btn-primary">See Details</a> --}}
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div> 
+                                @endforeach 
+    
+                                 @empty 
+    
+                                <td colspan="10" class="text-center">
+                                    There's no data in this table
+                                </td>
+                                 @endforelse
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="row mb-3">
+                    <div class="col-lg-12">
+                        <div class="card shadow-lg border">
+                            <div class="card-header border-0">
+                                <div class="d-flex justify-content-between">
+                                    <h3 class="card-title">Pending Aprroval</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+            
+                                    @forelse ($transactions_pending as $v)
+                                    <div class="col-md-3 mb-2">
+                                        <a href="#" style="text-decoration:none;">
+                                         
+                                         <div class="card" style="width: 9rem;background-color:#e3e3e3">
+                                             <div class="card-body">
+                                               <h5 class="card-title">{{ $v->room->number }}</h5>
+                                               <p class="card-text"> {{ Helper::dateFormat($v->check_in) }} <br>
+                                                 - {{ Helper::dateFormat($v->check_out) }}</p>
+                                               {{-- <a href="{{route('room.show', ['room'=>$transaction->room->id])}}" class="btn btn-primary">See Details</a> --}}
+                                             </div>
+                                         </div>
+                                     </a>
+                                 </div>  
+    
+                                 @empty 
+    
+                                <td colspan="10" class="text-center">
+                                    There's no data in this table
+                                </td>
+                                 @endforelse
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="row mb-3">
+                    <div class="col-lg-12">
+                        <div class="card shadow-lg border">
+                            <div class="card-header border-0">
+                                <div class="d-flex justify-content-between">
+                                    <h3 class="card-title">Occupied Rooms</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+            
+                                @forelse ($transactions as $transaction)
+                                <div class="col-md-3 mb-2">
+                                   <a href="{{route('room.show', ['room'=>$transaction->room->id])}}" style="text-decoration:none;">
+                                    
+                                    <div class="card" style="width: 9rem;background-color:#f6d0e3">
+                                        <div class="card-body">
+                                          <h5 class="card-title">{{ $transaction->room->number }}</h5>
+                                          <p class="card-text"> {{ Helper::dateFormat($transaction->check_in) }} <br>
+                                           - {{ Helper::dateFormat($transaction->check_out) }}</p>
+                                          {{-- <a href="{{route('room.show', ['room'=>$transaction->room->id])}}" class="btn btn-primary">See Details</a> --}}
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>  
+
+                             @empty 
+
+                            <td colspan="10" class="text-center">
+                                There's no data in this table
+                            </td>
+                             @endforelse
+                            </div>
+
+                           
+                                
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 

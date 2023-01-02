@@ -41,12 +41,24 @@
                                             value="{{ Helper::convertToRupiah($room->price) }}" readonly>
                                     </div>
                                 </div>
+                                <div class="row mb-3">
+                                    <label for="check_in" class="col-sm-2 col-form-label">Total Members</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="memberCount" name="memberCount"
+                                            placeholder="col-form-label" value="{{ $memberCount }}" readonly>
+                                    </div>
+                                </div>
                             </div>
                             <hr>
                             <div class="col-sm-12 mt-2">
+                                
+                                </div>  
+                                <div class="col-sm-12 mt-2">
                                 <form method="POST"
-                                    action="{{ route('transaction.reservation.payDownPayment', ['customer' => $customer->id, 'room' => $room->id]) }}">
+                                   {{--  action="{{ route('transaction.reservation.payDownPayment', ['customer' => $customer->id, 'room' => $room->id]) }}"> --}}
+                                    action="{{ route('transaction.reservation.pendingApprove', ['customer' => $customer->id, 'room' => $room->id]) }}">
                                     @csrf
+                                  
                                     <div class="row mb-3">
                                         <label for="check_in" class="col-sm-2 col-form-label">Check In</label>
                                         <div class="col-sm-10">
@@ -79,15 +91,15 @@
                                                 readonly>
                                         </div>
                                     </div>
-                                    <div class="row mb-3">
+                                   {{--  <div class="row mb-3">
                                         <label for="minimum_dp" class="col-sm-2 col-form-label">Minimum DP</label>
                                         <div class="col-sm-10">
                                             <input type="text" class="form-control" id="minimum_dp" name="minimum_dp"
                                                 placeholder="col-form-label"
                                                 value="{{ Helper::convertToRupiah($downPayment) }} " readonly>
                                         </div>
-                                    </div>
-                                    <div class="row mb-3">
+                                    </div> --}}
+                                    {{-- <div class="row mb-3">
                                         <label for="downPayment" class="col-sm-2 col-form-label">Payment</label>
                                         <div class="col-sm-10">
                                             <input type="text"
@@ -105,7 +117,8 @@
                                         <div class="col-sm-2"></div>
                                         <div class="col-sm-10" id="showPaymentType"></div>
                                     </div>
-                                    <button type="submit" class="btn btn-primary float-end">Pay DownPayment</button>
+                                    <button type="submit" class="btn btn-primary float-end">Pay DownPayment</button> --}}
+                                    <button type="submit" class="btn btn-primary float-end">Send To Approve</button> 
                                 </form>
                             </div>
                         </div>
@@ -144,7 +157,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    {{ $customer->birthdate }}
+                                    {{ $customer->umid }}
                                 </td>
                             </tr>
                             <tr>
@@ -168,7 +181,7 @@
 <script src="{{ asset('style/js/jquery.js') }}"></script>
 <script>
     $('#downPayment').keyup(function() {
-        $('#showPaymentType').text('Rp. ' + parseFloat($(this).val(), 10).toFixed(2).replace(
+        $('#showPaymentType').text('Rs. ' + parseFloat($(this).val(), 10).toFixed(2).replace(
                 /(\d)(?=(\d{3})+\.)/g, "$1.")
             .toString());
     });
